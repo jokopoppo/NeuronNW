@@ -10,10 +10,10 @@ class Node:
         self.input=[]
         self.x=x
         self.v=None
+        self.y=None
     def setW(self,w=[]):
 
         self.w=[]
-
 
         if self.input.__len__()==0 :
             self.w.append(1)
@@ -27,9 +27,11 @@ class Node:
     def add_output(self ,obj):
 
         self.output.append(obj)
+
         return
 
     def add_input(self ,obj):
 
         self.input.append(obj)
+
         return
