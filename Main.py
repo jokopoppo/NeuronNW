@@ -5,6 +5,10 @@ def activationFunc(v):
     y=1/(1+math.e**-v)
     return y
 
+def dActivationfuction(y):
+    x=y*(1-y)
+    return x
+
 def add_input(o1,o2):
     for i in range(o1.__len__()):
         for j in range(o2.__len__()):
@@ -20,7 +24,7 @@ def add_output(o1,o2):
 # initialize neural nw
 x=[1,0,1,1]
 d=[1,0]
-n=0.1
+lr=0.1
 
 wh=[[0.3,0.1,0.2,0.1],[0.2,0.2,0.1,0.3]]
 wo=[[0.1,0.1],[0.2,0.2]]
@@ -80,7 +84,7 @@ def feedfoward(arr):
 
         # produce y form node
 
-    print("produce y form node",)
+    print("produce y form node\n",)
     return
 
 feedfoward(hiddenNode)
@@ -89,3 +93,56 @@ feedfoward(outputNode)
 # stop feed forward
 
 # start back propagation
+
+# find error from each output node
+
+err=[]
+
+def setWnew(node,i):
+
+    for j in range(node[i].w.__len__()):
+        print(node[i].w[j],end="  ")
+        node[i].w[j] += (node[i].gradient*node[i].x[j]*lr)
+        print("W'",j," from node",i,":",node[i].w[j])
+
+    print(node[i].bias,end="  ")
+    node[i].bias += (node[i].gradient*1*lr)
+    print("Bias'"," from node",i,":",node[i].bias)
+    return
+
+def outputBPG(err):
+
+    for i in range(outputNode.__len__()):
+        err.append(d[i]-outputNode[i].y)
+    # find delta w from each output node
+        outputNode[i].wo=outputNode[i].w
+        outputNode[i].gradient=(-err[i]*dActivationfuction(outputNode[i].y))
+    # save gradient and w old for hidden BPG
+        setWnew(outputNode,i)
+
+    # outputBPG done
+    return
+
+def hiddenBPG(hiddenNode):
+    for i in range(hiddenNode.__len__()):
+    # find delta w from each hidden node
+        hiddenNode[i].wo=hiddenNode[i].w
+        sum=0
+        for j in hiddenNode[i].output:
+            sum+=(j.gradient*j.wo[i])
+        hiddenNode[i].gradient = (dActivationfuction(hiddenNode[i].y)*sum)
+    # save w old for hiddenBPG
+        setWnew(hiddenNode,i)
+    # hiddenBPG done
+    return
+
+outputBPG(err)
+
+print("\noutputBPG done\n")
+
+hiddenBPG(hiddenNode)
+
+
+
+
+

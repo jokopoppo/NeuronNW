@@ -11,6 +11,9 @@ class Node:
         self.x=x
         self.v=None
         self.y=None
+        self.wo=[]
+        self.gradient=None
+
     def setW(self,w=[]):
 
         self.w=[]
