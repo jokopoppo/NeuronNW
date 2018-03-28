@@ -1,6 +1,6 @@
 from Node import Node
 import math
-
+from test import readExel
 def activationFunc(v):
     y=1/(1+math.e**-v)
     return y
@@ -87,17 +87,6 @@ def feedfoward(arr):
     print("produce y form node\n",)
     return
 
-feedfoward(hiddenNode)
-feedfoward(outputNode)
-
-# stop feed forward
-
-# start back propagation
-
-# find error from each output node
-
-err=[]
-
 def setWnew(node,i):
 
     for j in range(node[i].w.__len__()):
@@ -114,10 +103,10 @@ def outputBPG(err):
 
     for i in range(outputNode.__len__()):
         err.append(d[i]-outputNode[i].y)
-    # find delta w from each output node
+        # find delta w from each output node
         outputNode[i].wo=outputNode[i].w
         outputNode[i].gradient=(-err[i]*dActivationfuction(outputNode[i].y))
-    # save gradient and w old for hidden BPG
+        # save gradient and w old for hidden BPG
         setWnew(outputNode,i)
 
     # outputBPG done
@@ -125,24 +114,30 @@ def outputBPG(err):
 
 def hiddenBPG(hiddenNode):
     for i in range(hiddenNode.__len__()):
-    # find delta w from each hidden node
+        # find delta w from each hidden node
         hiddenNode[i].wo=hiddenNode[i].w
         sum=0
         for j in hiddenNode[i].output:
             sum+=(j.gradient*j.wo[i])
         hiddenNode[i].gradient = (dActivationfuction(hiddenNode[i].y)*sum)
-    # save w old for hiddenBPG
+        # save w old for hiddenBPG
         setWnew(hiddenNode,i)
     # hiddenBPG done
     return
 
-outputBPG(err)
+for i in range(2):
+    # start feed forward
+    feedfoward(hiddenNode)
+    feedfoward(outputNode)
+    # stop feed forward
 
-print("\noutputBPG done\n")
+    # start back propagation # find error from each output node
+    err=[]
+    outputBPG(err)
+    print("\noutputBPG done\n")
+    hiddenBPG(hiddenNode)
 
-hiddenBPG(hiddenNode)
-
-
+data=readExel('Data.xls')
 
 
 
