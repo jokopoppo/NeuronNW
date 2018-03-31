@@ -1,9 +1,12 @@
 from Node import Node
 import math
 import random
-from test import readExel
+from test import readExel,preprocess
+
 def activationFunc(v):
+    print("V = ",v)
     y=1/(1+math.e**-v)
+
     return y
 
 def dActivationfuction(y):
@@ -71,18 +74,22 @@ def feedfoward(arr):
         arr[i].x=[]
         for j in range(arr[0].input.__len__()):
             arr[i].x.append(arr[i].input[j].y)
+        print("Input ",i," :",end=" ")
         print(arr[i].x)
 
     # why append array in one object can affect to the others ??
 
     for i in range(arr.__len__()):
         sum=0
+        print("Input for v : ",arr[i].x)
+
         for j in range(arr[i].x.__len__()):
             sum+=arr[i].x[j]*arr[i].w[j]
 
         arr[i].v=sum+arr[i].bias
         arr[i].y=activationFunc(arr[i].v)
 
+        print("Output ",i," :",end="")
         print(arr[i].y)
 
         # produce y form node
@@ -142,6 +149,11 @@ for i in data :
     ans.append(int(i.pop(i.__len__()-1)))
 
 print(data[0].__len__())
+
+print(max(data))
+print(min(data))
+
+data=preprocess(data)
 for i in range(data[0].__len__()):
     inputNode.append(Node(1,data[0][i]))
     inputNode[i].setW()
@@ -163,22 +175,31 @@ for i in range(3):
     hiddenNode[i].setW()
     outputNode[i].setW()
 
-# for i in range(ans.__len__()):
-#     for j in range(data[i].__len__()):
-#         inputNode[j].y=inputNode[j].x=data[i][j]
-#     # start feed forward
-#     feedfoward(hiddenNode)
-#     feedfoward(outputNode)
-#     # # stop feed forward
-#
-#     # start back propagation # find error from each output node
-#     err=[]
-#     d=[]
-#     for j in range(outputNode.__len__()):
-#         d.append(ans[i])
-#     outputBPG(d,err)
-#     print("\noutputBPG done\n")
-#     hiddenBPG(hiddenNode)
+print(max(data))
+print(min(data))
+
+for i in data :
+    for j in range(i.__len__()):
+        if(i[j]>10 or i[j]< -10):
+            print(j,i[j])
+for i in range(ans.__len__()):
+    print("\n\n\n*******Row ",i,"Start*****\n\n\n")
+    for j in range(data[i].__len__()):
+        inputNode[j].y=inputNode[j].x=data[i][j]
+    # start feed forward
+
+    feedfoward(hiddenNode)
+    feedfoward(outputNode)
+    # stop feed forward
+
+    # start back propagation # find error from each output node
+    err=[]
+    d=[]
+    for j in range(outputNode.__len__()):
+        d.append(ans[i])
+    outputBPG(d,err)
+    print("\noutputBPG done\n")
+    hiddenBPG(hiddenNode)
 
 
 

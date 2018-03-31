@@ -48,17 +48,23 @@ def readExel(exelname):
     # print(result_data[0].__len__())
     return result_data
 
-def preprocess():
-    return
+def preprocess(data):
+    lmax=max(data)
+    lmin=min(data)
+    mid=[]
+    for i in range(lmax.__len__()):
+        mid.append(lmax[i]-lmin[i])
 
-data=readExel('Data.xls')
-ans=[]
+    for i in data:
+        for j in range(i.__len__()):
+            if i[j]>10 or i[j]<-10 :
+                i[j]=((i[j]-lmin[j])/(mid[j]))
+    return data
 
-for i in data :
-    ans.append(int(i.pop(i.__len__()-1)))
+# data=readExel('Data.xls')
+# ans=[]
+#
+# for i in data :
+#     ans.append(int(i.pop(i.__len__()-1)))
 
-lmax=max(data)
-lmin=min(data)
 
-print(lmax)
-print(lmin)
