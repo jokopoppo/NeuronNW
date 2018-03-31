@@ -211,6 +211,7 @@ with open("Output.txt", "w") as text_file:
         print(f"Hidden Node ",i,",Bias' :",hiddenNode[i].bias, file=text_file)
         print(f"Output Node ",i,",W' :",outputNode[i].w, file=text_file)
         print(f"Output Node ",i,",Bias' :",outputNode[i].bias, file=text_file)
+        print()
 
 
 
