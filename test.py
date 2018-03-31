@@ -1,29 +1,3 @@
-# class Node:
-#
-#     def __init__(self,x=[]):
-#         self.x=x
-#
-#
-# node = []
-# for i in range(3):
-#     node.append(Node())
-#
-# for i in range(3):
-#     node[0].x.append(1)
-#
-# for i in node:
-#     print(i.x)
-
-import pandas as pd
-from pandas import ExcelWriter
-from pandas import ExcelFile
-
-# filepath='data.xls'
-# df = pd.read_excel(filepath , usecols="A")
-
-# print("Column headings:")
-# print(df.head().__len__())
-
 def readExel(exelname):
     import xlrd
 
@@ -49,8 +23,10 @@ def readExel(exelname):
     return result_data
 
 def preprocess(data):
-    lmax=max(data)
-    lmin=min(data)
+
+
+    lmax = list(map(max, zip(*data)))
+    lmin = list(map(min, zip(*data)))
     mid=[]
     for i in range(lmax.__len__()):
         mid.append(lmax[i]-lmin[i])
@@ -66,5 +42,7 @@ def preprocess(data):
 #
 # for i in data :
 #     ans.append(int(i.pop(i.__len__()-1)))
-
-
+x="KKKKK"
+with open("Output.txt", "w") as text_file:
+    for i in range(30):
+        print(f"Purchase Amount: {x}", file=text_file)

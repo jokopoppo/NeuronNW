@@ -3,28 +3,6 @@ import math
 import random
 from test import readExel,preprocess
 
-def activationFunc(v):
-    print("V = ",v)
-    y=1/(1+math.e**-v)
-
-    return y
-
-def dActivationfuction(y):
-    x=y*(1-y)
-    return x
-
-def add_input(o1,o2):
-    for i in range(o1.__len__()):
-        for j in range(o2.__len__()):
-            o1[i].add_input(o2[j])
-    return
-
-def add_output(o1,o2):
-    for i in range(o1.__len__()):
-        for j in range(o2.__len__()):
-            o1[i].add_output(o2[j])
-    return
-
 def testtree():
     x=[1,0,1,1]
     d=[1,0]
@@ -68,20 +46,42 @@ def testtree():
 
 # end initialize neural nw
 
+def activationFunc(v):
+    # print("V = ",v)
+    y=1/(1+math.e**-v)
+
+    return y
+
+def dActivationfuction(y):
+    x=y*(1-y)
+    return x
+
+def add_input(o1,o2):
+    for i in range(o1.__len__()):
+        for j in range(o2.__len__()):
+            o1[i].add_input(o2[j])
+    return
+
+def add_output(o1,o2):
+    for i in range(o1.__len__()):
+        for j in range(o2.__len__()):
+            o1[i].add_output(o2[j])
+    return
+
 def feedfoward(arr):
     # start feed forward
     for i in range(arr.__len__()):
         arr[i].x=[]
         for j in range(arr[0].input.__len__()):
             arr[i].x.append(arr[i].input[j].y)
-        print("Input ",i," :",end=" ")
-        print(arr[i].x)
+        # print("Input ",i," :",end=" ")
+        # print(arr[i].x)
 
     # why append array in one object can affect to the others ??
 
     for i in range(arr.__len__()):
         sum=0
-        print("Input for v : ",arr[i].x)
+        # print("Input for v : ",arr[i].x)
 
         for j in range(arr[i].x.__len__()):
             sum+=arr[i].x[j]*arr[i].w[j]
@@ -89,32 +89,32 @@ def feedfoward(arr):
         arr[i].v=sum+arr[i].bias
         arr[i].y=activationFunc(arr[i].v)
 
-        print("Output ",i," :",end="")
-        print(arr[i].y)
+        # print("Output ",i," :",end="")
+        # print(arr[i].y)
 
         # produce y form node
 
-    print("produce y form node\n",)
+    # print("produce y form node\n",)
     return
 
 def setWnew(node,i):
 
     for j in range(node[i].w.__len__()):
-        print(node[i].w[j],end="  ")
+        # print(node[i].w[j],end="  ")
         node[i].w[j] += (node[i].gradient*node[i].x[j]*lr)
-        print("W'",j," from node",i,":",node[i].w[j])
+        # print("W'",j," from node",i,":",node[i].w[j])
 
-    print(node[i].bias,end="  ")
+    # print(node[i].bias,end="  ")
     node[i].bias += (node[i].gradient*1*lr)
-    print("Bias'"," from node",i,":",node[i].bias)
+    # print("Bias'"," from node",i,":",node[i].bias)
     return
 
 def outputBPG(d,err):
 
     for i in range(outputNode.__len__()):
-        print("ERR =",d[i],"-",outputNode[i].y,"=",end=" ")
+        # print("ERR =",d[i],"-",outputNode[i].y,"=",end=" ")
         err.append(d[i]-outputNode[i].y)
-        print(err[i])
+        # print(err[i])
         # find delta w from each output node
         outputNode[i].wo=outputNode[i].w
         outputNode[i].gradient=(-err[i]*dActivationfuction(outputNode[i].y))
@@ -148,12 +148,14 @@ ans=[]
 for i in data :
     ans.append(int(i.pop(i.__len__()-1)))
 
-print(data[0].__len__())
-
-print(max(data))
-print(min(data))
-
 data=preprocess(data)
+
+min = list(map(min, zip(*data)))
+max = list(map(max, zip(*data)))
+
+print(max)
+print(min)
+
 for i in range(data[0].__len__()):
     inputNode.append(Node(1,data[0][i]))
     inputNode[i].setW()
@@ -175,13 +177,12 @@ for i in range(3):
     hiddenNode[i].setW()
     outputNode[i].setW()
 
-print(max(data))
-print(min(data))
 
 for i in data :
     for j in range(i.__len__()):
         if(i[j]>10 or i[j]< -10):
             print(j,i[j])
+
 for i in range(ans.__len__()):
     print("\n\n\n*******Row ",i,"Start*****\n\n\n")
     for j in range(data[i].__len__()):
@@ -198,9 +199,18 @@ for i in range(ans.__len__()):
     for j in range(outputNode.__len__()):
         d.append(ans[i])
     outputBPG(d,err)
-    print("\noutputBPG done\n")
+    # print("\noutputBPG done\n")
     hiddenBPG(hiddenNode)
 
+# save W' and Bias' of all node
+
+
+with open("Output.txt", "w") as text_file:
+    for i in range(hiddenNode.__len__()):
+        print(f"Hidden Node ",i,",W' :",hiddenNode[i].w, file=text_file)
+        print(f"Hidden Node ",i,",Bias' :",hiddenNode[i].bias, file=text_file)
+        print(f"Output Node ",i,",W' :",outputNode[i].w, file=text_file)
+        print(f"Output Node ",i,",Bias' :",outputNode[i].bias, file=text_file)
 
 
 
