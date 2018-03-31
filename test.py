@@ -45,12 +45,20 @@ def readExel(exelname):
 
         result_data.append(row_data)
     print("read done")
-    print(result_data[0].__len__())
+    # print(result_data[0].__len__())
     return result_data
+
+def preprocess():
+    return
 
 data=readExel('Data.xls')
 ans=[]
+
 for i in data :
     ans.append(int(i.pop(i.__len__()-1)))
-print(ans.__len__())
-print(ans)
+
+lmax=max(data)
+lmin=min(data)
+
+print(lmax)
+print(lmin)

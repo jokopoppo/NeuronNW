@@ -1,5 +1,6 @@
 from Node import Node
 import math
+import random
 from test import readExel
 def activationFunc(v):
     y=1/(1+math.e**-v)
@@ -21,45 +22,46 @@ def add_output(o1,o2):
             o1[i].add_output(o2[j])
     return
 
+def testtree():
+    x=[1,0,1,1]
+    d=[1,0]
+    lr=0.1
+
+    wh=[[0.3,0.1,0.2,0.1],[0.2,0.2,0.1,0.3]]
+    wo=[[0.1,0.1],[0.2,0.2]]
+
+
+
+    for i in range(4):
+        inputNode.append(Node(1,x[i]))
+        print(inputNode[i].setW(),end="")
+        inputNode[i].y=inputNode[i].x
+    print()
+
+    hiddenNode.append(Node(0.2))
+    hiddenNode.append(Node(0.4))
+
+    add_input(hiddenNode,inputNode)
+    add_output(inputNode,hiddenNode)
+
+    # set W hidden node
+    for i in range(wh.__len__()):
+        print(hiddenNode[i].setW(wh[i]),end="")
+    print()
+
+    outputNode.append(Node(0.1))
+    outputNode.append(Node(0.2))
+
+    add_input(outputNode,hiddenNode)
+    add_output(hiddenNode,outputNode)
+
+    # set W output node
+    for i in range(wo.__len__()):
+        print(outputNode[i].setW(wo[i]),end="")
+    print("\n\nend initialize neural nw\n")
+
+    return
 # initialize neural nw
-x=[1,0,1,1]
-d=[1,0]
-lr=0.1
-
-wh=[[0.3,0.1,0.2,0.1],[0.2,0.2,0.1,0.3]]
-wo=[[0.1,0.1],[0.2,0.2]]
-
-inputNode=[]
-hiddenNode=[]
-outputNode=[]
-
-for i in range(4):
-    inputNode.append(Node(1,x[i]))
-    print(inputNode[i].setW(),end="")
-    inputNode[i].y=inputNode[i].x
-print()
-
-hiddenNode.append(Node(0.2))
-hiddenNode.append(Node(0.4))
-
-add_input(hiddenNode,inputNode)
-add_output(inputNode,hiddenNode)
-
-# set W hidden node
-for i in range(wh.__len__()):
-    print(hiddenNode[i].setW(wh[i]),end="")
-print()
-
-outputNode.append(Node(0.1))
-outputNode.append(Node(0.2))
-
-add_input(outputNode,hiddenNode)
-add_output(hiddenNode,outputNode)
-
-# set W output node
-for i in range(wo.__len__()):
-    print(outputNode[i].setW(wo[i]),end="")
-print("\n\nend initialize neural nw\n")
 
 # end initialize neural nw
 
@@ -80,6 +82,7 @@ def feedfoward(arr):
 
         arr[i].v=sum+arr[i].bias
         arr[i].y=activationFunc(arr[i].v)
+
         print(arr[i].y)
 
         # produce y form node
@@ -99,10 +102,12 @@ def setWnew(node,i):
     print("Bias'"," from node",i,":",node[i].bias)
     return
 
-def outputBPG(err):
+def outputBPG(d,err):
 
     for i in range(outputNode.__len__()):
+        print("ERR =",d[i],"-",outputNode[i].y,"=",end=" ")
         err.append(d[i]-outputNode[i].y)
+        print(err[i])
         # find delta w from each output node
         outputNode[i].wo=outputNode[i].w
         outputNode[i].gradient=(-err[i]*dActivationfuction(outputNode[i].y))
@@ -125,19 +130,57 @@ def hiddenBPG(hiddenNode):
     # hiddenBPG done
     return
 
-for i in range(2):
-    # start feed forward
-    feedfoward(hiddenNode)
-    feedfoward(outputNode)
-    # stop feed forward
+inputNode=[]
+hiddenNode=[]
+outputNode=[]
 
-    # start back propagation # find error from each output node
-    err=[]
-    outputBPG(err)
-    print("\noutputBPG done\n")
-    hiddenBPG(hiddenNode)
-
+lr=0.1
 data=readExel('Data.xls')
+ans=[]
+
+for i in data :
+    ans.append(int(i.pop(i.__len__()-1)))
+
+print(data[0].__len__())
+for i in range(data[0].__len__()):
+    inputNode.append(Node(1,data[0][i]))
+    inputNode[i].setW()
+    inputNode[i].y=inputNode[i].x
+
+print()
+
+for i in range(3):
+    hiddenNode.append(Node(random.uniform(0.5,1)))
+    outputNode.append(Node(random.uniform(0.5,1)))
+
+add_input(hiddenNode,inputNode)
+add_output(inputNode,hiddenNode)
+
+add_input(outputNode,hiddenNode)
+add_output(hiddenNode,outputNode)
+
+for i in range(3):
+    hiddenNode[i].setW()
+    outputNode[i].setW()
+
+# for i in range(ans.__len__()):
+#     for j in range(data[i].__len__()):
+#         inputNode[j].y=inputNode[j].x=data[i][j]
+#     # start feed forward
+#     feedfoward(hiddenNode)
+#     feedfoward(outputNode)
+#     # # stop feed forward
+#
+#     # start back propagation # find error from each output node
+#     err=[]
+#     d=[]
+#     for j in range(outputNode.__len__()):
+#         d.append(ans[i])
+#     outputBPG(d,err)
+#     print("\noutputBPG done\n")
+#     hiddenBPG(hiddenNode)
+
+
 
 
 
