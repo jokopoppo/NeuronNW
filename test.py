@@ -1,29 +1,3 @@
-# class Node:
-#
-#     def __init__(self,x=[]):
-#         self.x=x
-#
-#
-# node = []
-# for i in range(3):
-#     node.append(Node())
-#
-# for i in range(3):
-#     node[0].x.append(1)
-#
-# for i in node:
-#     print(i.x)
-
-import pandas as pd
-from pandas import ExcelWriter
-from pandas import ExcelFile
-
-# filepath='data.xls'
-# df = pd.read_excel(filepath , usecols="A")
-
-# print("Column headings:")
-# print(df.head().__len__())
-
 def readExel(exelname):
     import xlrd
 
@@ -48,17 +22,27 @@ def readExel(exelname):
     # print(result_data[0].__len__())
     return result_data
 
-def preprocess():
-    return
+def preprocess(data):
 
-data=readExel('Data.xls')
-ans=[]
 
-for i in data :
-    ans.append(int(i.pop(i.__len__()-1)))
+    lmax = list(map(max, zip(*data)))
+    lmin = list(map(min, zip(*data)))
+    mid=[]
+    for i in range(lmax.__len__()):
+        mid.append(lmax[i]-lmin[i])
 
-lmax=max(data)
-lmin=min(data)
+    for i in data:
+        for j in range(i.__len__()):
+            if i[j]>10 or i[j]<-10 :
+                i[j]=((i[j]-lmin[j])/(mid[j]))
+    return data
 
-print(lmax)
-print(lmin)
+# data=readExel('Data.xls')
+# ans=[]
+#
+# for i in data :
+#     ans.append(int(i.pop(i.__len__()-1)))
+x="KKKKK"
+with open("Output.txt", "w") as text_file:
+    for i in range(30):
+        print(f"Purchase Amount: {x}", file=text_file)
