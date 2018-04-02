@@ -137,17 +137,62 @@ def hiddenBPG(hiddenNode):
     # hiddenBPG done
     return
 
+def train(data,ans):
+    # start train
+    for i in range(int(ans.__len__()*70/100)):
+        # print("\n\n\n*******Row ",i,"Start*****\n\n\n")
+        for j in range(data[i].__len__()):
+            inputNode[j].y=inputNode[j].x=data[i][j]
+        # start feed forward
+
+        feedfoward(hiddenNode)
+        feedfoward(outputNode)
+        # stop feed forward
+
+        # start back propagation # find error from each output node
+        err=[]
+        d=[]
+        for j in range(outputNode.__len__()):
+            d.append(ans[i])
+        outputBPG(d,err)
+        # print("\noutputBPG done\n")
+        hiddenBPG(hiddenNode)
+
+    # train done
+    return
+
+def test(data,ans):
+    # start test
+    correct=0
+    for i in range(data.__len__()):
+        # print("\n\n\n*******Row ",i,"Start Test*****\n\n\n")
+        for j in range(data[i].__len__()):
+            inputNode[j].y=inputNode[j].x=data[i][j]
+        # start feed forward
+
+        feedfoward(hiddenNode)
+        feedfoward(outputNode)
+        # stop feed forward
+
+        d=[]
+        for j in outputNode:
+            d.append(round(j.y))
+        y=int("".join(map(str,d)), 2)
+        if(abs(y-7) > abs(y-0) and ans[i]==0):
+            correct+=1
+        elif(abs(y-7) < abs(y-0) and ans[i]==1):
+            correct+=1
+
+    # test done
+    return correct
+
 inputNode=[]
 hiddenNode=[]
 outputNode=[]
 
-lr=0.1
+lr=100
+
 data=readExel('Data.xls')
-ans=[]
-
-for i in data :
-    ans.append(int(i.pop(i.__len__()-1)))
-
 data=preprocess(data)
 
 min = list(map(min, zip(*data)))
@@ -155,6 +200,14 @@ max = list(map(max, zip(*data)))
 
 print(max)
 print(min)
+
+ans=[]
+
+datatrain=data[0:int(data.__len__()*70/100)]
+datatest=data[int(data.__len__()*70/100):]
+
+for i in data :
+    ans.append(int(i.pop(i.__len__()-1)))
 
 for i in range(data[0].__len__()):
     inputNode.append(Node(1,data[0][i]))
@@ -177,42 +230,28 @@ for i in range(3):
     hiddenNode[i].setW()
     outputNode[i].setW()
 
+n=0
+e=0
+while(n<3):
+    train(datatrain,ans)
+    print("Train done")
 
-for i in data :
-    for j in range(i.__len__()):
-        if(i[j]>10 or i[j]< -10):
-            print(j,i[j])
-
-for i in range(ans.__len__()):
-    print("\n\n\n*******Row ",i,"Start*****\n\n\n")
-    for j in range(data[i].__len__()):
-        inputNode[j].y=inputNode[j].x=data[i][j]
-    # start feed forward
-
-    feedfoward(hiddenNode)
-    feedfoward(outputNode)
-    # stop feed forward
-
-    # start back propagation # find error from each output node
-    err=[]
-    d=[]
-    for j in range(outputNode.__len__()):
-        d.append(ans[i])
-    outputBPG(d,err)
-    # print("\noutputBPG done\n")
-    hiddenBPG(hiddenNode)
-
+    anstest=ans[int(data.__len__()*70/100):]
+    c=test(datatest,anstest)
+    print("Test done")
+    e=c*100/anstest.__len__()
+    print(e)
+    n+=1
+    print(n)
 # save W' and Bias' of all node
-
-
-with open("Output.txt", "w") as text_file:
-    for i in range(hiddenNode.__len__()):
-        print(f"Hidden Node ",i,",W' :",hiddenNode[i].w, file=text_file)
-        print(f"Hidden Node ",i,",Bias' :",hiddenNode[i].bias, file=text_file)
-        print(f"Output Node ",i,",W' :",outputNode[i].w, file=text_file)
-        print(f"Output Node ",i,",Bias' :",outputNode[i].bias, file=text_file)
-        print()
-
+#
+#     with open("Output.txt", "w") as text_file:
+#         for i in range(hiddenNode.__len__()):
+#             print(f"Hidden Node ",i,",W' :",hiddenNode[i].w, file=text_file)
+#             print(f"Hidden Node ",i,",Bias' :",hiddenNode[i].bias, file=text_file)
+#             print(f"Output Node ",i,",W' :",outputNode[i].w, file=text_file)
+#             print(f"Output Node ",i,",Bias' :",outputNode[i].bias, file=text_file)
+#             print()
 
 
 

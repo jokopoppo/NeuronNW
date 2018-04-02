@@ -42,7 +42,7 @@ def preprocess(data):
 #
 # for i in data :
 #     ans.append(int(i.pop(i.__len__()-1)))
-x="KKKKK"
-with open("Output.txt", "w") as text_file:
-    for i in range(30):
-        print(f"Purchase Amount: {x}", file=text_file)
+
+
+
+
