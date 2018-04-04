@@ -19,7 +19,7 @@ class Node:
         self.w=[]
 
         if self.input.__len__()==0 :
-            self.w.append(1)
+            self.w.append(0.1)
         elif w==[]:
             for i in range (self.input.__len__()):
                 self.w.append(random.uniform(0.5,1))
