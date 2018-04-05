@@ -1,3 +1,43 @@
+def testtree():
+    x=[1,0,1,1]
+    d=[1,0]
+    lr=0.1
+
+    wh=[[0.3,0.1,0.2,0.1],[0.2,0.2,0.1,0.3]]
+    wo=[[0.1,0.1],[0.2,0.2]]
+
+
+
+    for i in range(4):
+        inputNode.append(Node(1,x[i]))
+        print(inputNode[i].setW(),end="")
+        inputNode[i].y=inputNode[i].x
+    print()
+
+    hiddenNode.append(Node(0.2))
+    hiddenNode.append(Node(0.4))
+
+    add_input(hiddenNode,inputNode)
+    add_output(inputNode,hiddenNode)
+
+    # set W hidden node
+    for i in range(wh.__len__()):
+        print(hiddenNode[i].setW(wh[i]),end="")
+    print()
+
+    outputNode.append(Node(0.1))
+    outputNode.append(Node(0.2))
+
+    add_input(outputNode,hiddenNode)
+    add_output(hiddenNode,outputNode)
+
+    # set W output node
+    for i in range(wo.__len__()):
+        print(outputNode[i].setW(wo[i]),end="")
+    print("\n\nend initialize neural nw\n")
+
+    return
+
 def readExel(exelname):
     import xlrd
 
@@ -33,7 +73,7 @@ def preprocess(data):
 
     for i in data:
         for j in range(i.__len__()):
-            if i[j]>10 or i[j]<-10 :
+            if i[j]>100 or i[j]<-100 :
                 i[j]=((i[j]-lmin[j])/(mid[j]))
     return data
 
@@ -42,7 +82,7 @@ def preprocess(data):
 #
 # for i in data :
 #     ans.append(int(i.pop(i.__len__()-1)))
-x="KKKKK"
-with open("Output.txt", "w") as text_file:
-    for i in range(30):
-        print(f"Purchase Amount: {x}", file=text_file)
+
+
+
+

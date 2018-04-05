@@ -1,47 +1,8 @@
 from Node import Node
 import math
 import random
-from test import readExel,preprocess
+from test import *
 
-def testtree():
-    x=[1,0,1,1]
-    d=[1,0]
-    lr=0.1
-
-    wh=[[0.3,0.1,0.2,0.1],[0.2,0.2,0.1,0.3]]
-    wo=[[0.1,0.1],[0.2,0.2]]
-
-
-
-    for i in range(4):
-        inputNode.append(Node(1,x[i]))
-        print(inputNode[i].setW(),end="")
-        inputNode[i].y=inputNode[i].x
-    print()
-
-    hiddenNode.append(Node(0.2))
-    hiddenNode.append(Node(0.4))
-
-    add_input(hiddenNode,inputNode)
-    add_output(inputNode,hiddenNode)
-
-    # set W hidden node
-    for i in range(wh.__len__()):
-        print(hiddenNode[i].setW(wh[i]),end="")
-    print()
-
-    outputNode.append(Node(0.1))
-    outputNode.append(Node(0.2))
-
-    add_input(outputNode,hiddenNode)
-    add_output(hiddenNode,outputNode)
-
-    # set W output node
-    for i in range(wo.__len__()):
-        print(outputNode[i].setW(wo[i]),end="")
-    print("\n\nend initialize neural nw\n")
-
-    return
 # initialize neural nw
 
 # end initialize neural nw
@@ -89,9 +50,6 @@ def feedfoward(arr):
         arr[i].v=sum+arr[i].bias
         arr[i].y=activationFunc(arr[i].v)
 
-        # print("Output ",i," :",end="")
-        # print(arr[i].y)
-
         # produce y form node
 
     # print("produce y form node\n",)
@@ -137,17 +95,59 @@ def hiddenBPG(hiddenNode):
     # hiddenBPG done
     return
 
+def train(data,ans):
+    # start train
+    for i in range(ans.__len__()):
+        # print("\n\n\n*******Row ",i,"Start*****\n\n\n")
+        for j in range(data[i].__len__()):
+            inputNode[j].y=data[i][j]
+        # start feed forward
+
+        feedfoward(hiddenNode)
+        feedfoward(outputNode)
+        # stop feed forward
+
+        # start back propagation # find error from each output node
+        err=[]
+        d=[]
+        for j in range(outputNode.__len__()):
+            d.append(ans[i])
+        outputBPG(d,err)
+        # print("\noutputBPG done\n")
+        hiddenBPG(hiddenNode)
+
+    # train done
+    return
+
+def test(data,ans):
+    # start test
+    correct=0
+    for i in range(ans.__len__()):
+        # print("\n\n\n*******Row ",i,"Start Test*****\n\n\n")
+        for j in range(data[i].__len__()):
+            inputNode[j].y=inputNode[j].x=data[i][j]
+        # start feed forward
+        feedfoward(hiddenNode)
+        feedfoward(outputNode)
+        # stop feed forward
+
+        tmp=0
+        for j in outputNode:
+            tmp+=(j.y-ans[i])**2
+
+        if(tmp**1/2 < ((0.5**2)*outputNode.__len__())**1/2):
+            correct+=1
+
+    # test done
+    return correct
+
 inputNode=[]
 hiddenNode=[]
 outputNode=[]
 
 lr=0.1
+
 data=readExel('Data.xls')
-ans=[]
-
-for i in data :
-    ans.append(int(i.pop(i.__len__()-1)))
-
 data=preprocess(data)
 
 min = list(map(min, zip(*data)))
@@ -155,6 +155,16 @@ max = list(map(max, zip(*data)))
 
 print(max)
 print(min)
+
+datatrain=data[0:int(data.__len__()*90/100)]
+datatest=data[int(data.__len__()*90/100):]
+
+ans=[]
+for i in data :
+    ans.append(int(i.pop(i.__len__()-1)))
+
+anstest=ans[int(data.__len__()*90/100):]
+ans=ans[0:int(data.__len__()*90/100)]
 
 for i in range(data[0].__len__()):
     inputNode.append(Node(1,data[0][i]))
@@ -177,42 +187,24 @@ for i in range(3):
     hiddenNode[i].setW()
     outputNode[i].setW()
 
+n=0
+e=0
 
-for i in data :
-    for j in range(i.__len__()):
-        if(i[j]>10 or i[j]< -10):
-            print(j,i[j])
-
-for i in range(ans.__len__()):
-    print("\n\n\n*******Row ",i,"Start*****\n\n\n")
-    for j in range(data[i].__len__()):
-        inputNode[j].y=inputNode[j].x=data[i][j]
-    # start feed forward
-
-    feedfoward(hiddenNode)
-    feedfoward(outputNode)
-    # stop feed forward
-
-    # start back propagation # find error from each output node
-    err=[]
-    d=[]
-    for j in range(outputNode.__len__()):
-        d.append(ans[i])
-    outputBPG(d,err)
-    # print("\noutputBPG done\n")
-    hiddenBPG(hiddenNode)
-
+print(anstest.__len__())
+while(n<10):
+    train(datatrain,ans)
+    c=test(datatest,anstest)
+    n+=1
+    print(n,c)
 # save W' and Bias' of all node
-
-
+#
 with open("Output.txt", "w") as text_file:
     for i in range(hiddenNode.__len__()):
         print(f"Hidden Node ",i,",W' :",hiddenNode[i].w, file=text_file)
         print(f"Hidden Node ",i,",Bias' :",hiddenNode[i].bias, file=text_file)
         print(f"Output Node ",i,",W' :",outputNode[i].w, file=text_file)
         print(f"Output Node ",i,",Bias' :",outputNode[i].bias, file=text_file)
-        print()
-
+    print(n, file=text_file)
 
 
 
