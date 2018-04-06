@@ -145,10 +145,10 @@ inputNode=[]
 hiddenNode=[]
 outputNode=[]
 
-lr=0.1
+lr=10
 
 data=readExel('Data.xls')
-data=preprocess(data)
+data=preprocess(data,1)
 
 min = list(map(min, zip(*data)))
 max = list(map(max, zip(*data)))
@@ -172,10 +172,10 @@ for i in range(data[0].__len__()):
     inputNode[i].y=inputNode[i].x
 
 print()
-
+s=readtext()
 for i in range(3):
-    hiddenNode.append(Node(random.uniform(0.5,1)))
-    outputNode.append(Node(random.uniform(0.5,1)))
+    hiddenNode.append(Node(float(s.pop(0))))
+    outputNode.append(Node(float(s.pop(0))))
 
 add_input(hiddenNode,inputNode)
 add_output(inputNode,hiddenNode)
@@ -184,14 +184,17 @@ add_input(outputNode,hiddenNode)
 add_output(hiddenNode,outputNode)
 
 for i in range(3):
-    hiddenNode[i].setW()
-    outputNode[i].setW()
+    s[0]=convertStr(s,0)
+    hiddenNode[i].setW(s.pop(0))
+    s[0]=convertStr(s,0)
+    outputNode[i].setW(s.pop(0))
+
 
 n=0
 e=0
 
 print(anstest.__len__())
-while(n<10):
+while(n<5):
     train(datatrain,ans)
     c=test(datatest,anstest)
     n+=1
@@ -200,11 +203,13 @@ while(n<10):
 #
 with open("Output.txt", "w") as text_file:
     for i in range(hiddenNode.__len__()):
-        print(f"Hidden Node ",i,",W' :",hiddenNode[i].w, file=text_file)
-        print(f"Hidden Node ",i,",Bias' :",hiddenNode[i].bias, file=text_file)
-        print(f"Output Node ",i,",W' :",outputNode[i].w, file=text_file)
-        print(f"Output Node ",i,",Bias' :",outputNode[i].bias, file=text_file)
-    print(n, file=text_file)
+        print(hiddenNode[i].bias, file=text_file)
+        print(outputNode[i].bias, file=text_file)
+    for i in range(hiddenNode.__len__()):
+        print(hiddenNode[i].w, file=text_file)
+        print(outputNode[i].w, file=text_file)
+
+    print(n+int(s[s.__len__()-1]), file=text_file)
 
 
 

@@ -62,7 +62,7 @@ def readExel(exelname):
     # print(result_data[0].__len__())
     return result_data
 
-def preprocess(data):
+def preprocess(data,r):
 
 
     lmax = list(map(max, zip(*data)))
@@ -73,7 +73,7 @@ def preprocess(data):
 
     for i in data:
         for j in range(i.__len__()):
-            if i[j]>100 or i[j]<-100 :
+            if i[j]>r or i[j]<-r :
                 i[j]=((i[j]-lmin[j])/(mid[j]))
     return data
 
@@ -82,7 +82,31 @@ def preprocess(data):
 #
 # for i in data :
 #     ans.append(int(i.pop(i.__len__()-1)))
+def readtext():
+    with open("Output.txt") as text_file:
+        s=(text_file.readlines())
+    return s
 
+def convertStr(s,n):
 
+    a=s[n].split(",")
 
+    a[0]=float(a[0][1:])
+    a[a.__len__()-1]=float(a[a.__len__()-1][:a[a.__len__()-1].__len__()-2])
+
+    for j in range(a.__len__()) :
+        a[j]=float(a[j])
+    return a
+
+# s=readtext()
+#
+# for i in range(6):
+#     s.pop(0)
+#
+# print(s)
+# for i in range(s.__len__()-1):
+#     s[0]=convertStr(s,0)
+#     for k in s[0]:
+#         print(type(k))
+#     print(s.pop(0))
 
