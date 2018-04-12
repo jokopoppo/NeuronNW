@@ -82,8 +82,8 @@ def preprocess(data,r):
 #
 # for i in data :
 #     ans.append(int(i.pop(i.__len__()-1)))
-def readtext():
-    with open("Output.txt") as text_file:
+def readtext(t):
+    with open(t) as text_file:
         s=(text_file.readlines())
     return s
 
@@ -109,4 +109,4 @@ def convertStr(s,n):
 #     for k in s[0]:
 #         print(type(k))
 #     print(s.pop(0))
-
+import random
