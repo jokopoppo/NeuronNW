@@ -1,6 +1,6 @@
 from Node import Node
 import math
-
+import numpy as np
 # from test2 import *
 from test import *
 
@@ -11,7 +11,7 @@ from test import *
 
 def activationFunc(v):
     # print("V = ",v)
-    y = 1 / (1 + math.e ** -v)
+    y = 1 / (1 + math.exp(-v))
 
     return y
 
@@ -45,12 +45,9 @@ def feedfoward(arr):
         # print("Input ",i," :",end=" ")
         # print(arr[i].x)
 
-        sum = 0
+        s = (np.array(arr[i].x) * np.array(arr[i].w))
 
-        for j in range(arr[i].x.__len__()):
-            sum += arr[i].x[j] * arr[i].w[j]
-
-        arr[i].v = sum + arr[i].bias
+        arr[i].v = sum(s) + arr[i].bias
         arr[i].y = activationFunc(arr[i].v)
 
         # produce y form node
@@ -103,7 +100,7 @@ def hiddenBPG(hiddenNode):
 
 def train(outputNode, hiddenNode, data, ans):
     # start train
-
+    ccc=0
     for i in range(data.__len__()):
         # print("\n\n\n*******Row ",i,"Start*****\n\n\n")
         for j in range(data[i].__len__()):
@@ -117,6 +114,7 @@ def train(outputNode, hiddenNode, data, ans):
         # start back propagation # find error from each output node
         err = []
         d = []
+
         for j in range(outputNode.__len__()):
             d.append(ans[i])
 
@@ -124,6 +122,7 @@ def train(outputNode, hiddenNode, data, ans):
         hiddenNode = hiddenBPG(hiddenNode)
 
     # train done
+
     return
 
 
@@ -140,10 +139,9 @@ def test(outputNode, hiddenNode, data, ans):
         feedfoward(outputNode)
         # stop feed forward
 
-        tmp = 0
-        for j in range(outputNode.__len__()):
-            tmp += outputNode[j].y
-        if (abs(tmp - ans[i] * outputNode.__len__()) < ans[i] * outputNode.__len__() / 2):
+        tmp = outputNode[0].y
+
+        if (abs(tmp - ans[i] ) <= 1/2):
             correct += 1
 
     # test done
@@ -160,27 +158,23 @@ lr = 1
 data = readExel('Data.xls')
 data = preprocess(data, 1)
 
+percent=int(data.__len__()*10/100)
+random.shuffle(data)
+
+dat=[]
+
+for i in range(10):
+    dat.append(data[i*percent:(i+1)*percent])
+
 # random.shuffle(data)
 # data=iristest()
 
 
-min = list(map(min, zip(*data)))
-max = list(map(max, zip(*data)))
+# min = list(map(min, zip(*data)))
+# max = list(map(max, zip(*data)))
 
-print(max)
-print(min)
 
-datatrain = data[0:int(data.__len__() * 80 / 100)]
-datatest = data[int(data.__len__() * 80 / 100):]
-
-ans = []
-for i in data:
-    ans.append(int(i.pop(i.__len__() - 1)))
-
-anstest = ans[int(data.__len__() * 80 / 100):]
-ans = ans[0:int(data.__len__() * 80 / 100)]
-
-for i in range(data[0].__len__()):
+for i in range(data[0].__len__()-1):
     inputNode.append(Node(1, data[0][i]))
     inputNode[i].setW()
     inputNode[i].y = inputNode[i].x
@@ -189,7 +183,7 @@ print()
 s = readtext("Output.txt")
 for i in range(3):
     hiddenNode.append(Node(float(s.pop(0))))
-    outputNode.append(Node(float(s.pop(0))))
+outputNode.append(Node(float(s.pop(0))))
 
 add_input(hiddenNode, inputNode)
 add_output(inputNode, hiddenNode)
@@ -200,26 +194,49 @@ add_output(hiddenNode, outputNode)
 for i in range(3):
     s[0] = convertStr(s, 0)
     hiddenNode[i].setW(s.pop(0))
-    s[0] = convertStr(s, 0)
-    outputNode[i].setW(s.pop(0))
+s[0] = convertStr(s, 0)
+outputNode[0].setW(s.pop(0))
 
 n = 0
 e = 0
 
-print(anstest.__len__())
-while (n < 1):
+acc=[]
+while (n < 10):
+
+    datatrain=[]
+    datatest=dat[n]
+
+    for i in range(dat.__len__()):
+        if(i!=n):
+            datatrain+=dat[i]
+
+    random.shuffle(datatrain)
+
+    ans = []
+    for i in datatrain:
+        ans.append(int(i.pop(i.__len__() - 1)))
+
+    anstest =[]
+    for i in datatest:
+        anstest.append(int(i.pop(i.__len__() - 1)))
+
     train(outputNode, hiddenNode, datatrain, ans)
     c = test(outputNode, hiddenNode, datatest, anstest)
     n += 1
     print(n, c)
+    acc.append(c)
+
+accurancy=((sum(acc)/acc.__len__())/datatest.__len__())*100
+print("Accurancy = ",accurancy,"%")
+
 # save W' and Bias' of all node
-#
+
 with open("Output.txt", "w") as text_file:
     for i in range(hiddenNode.__len__()):
         print(hiddenNode[i].bias, file=text_file)
-        print(outputNode[i].bias, file=text_file)
+    print(outputNode[0].bias, file=text_file)
     for i in range(hiddenNode.__len__()):
         print(hiddenNode[i].w, file=text_file)
-        print(outputNode[i].w, file=text_file)
+    print(outputNode[0].w, file=text_file)
 
     print(n + int(s[s.__len__() - 1]), file=text_file)

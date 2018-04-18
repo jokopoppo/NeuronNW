@@ -1,5 +1,6 @@
 from test import *
-
+import math
+import numpy as np
 def iristest():
     data = readtext("Iris.txt")
     for i in range(data.__len__()):
@@ -17,3 +18,6 @@ def iristest():
 
     random.shuffle(data)
     return data
+
+y = 1 / (1 + math.exp(1))
+print(y)

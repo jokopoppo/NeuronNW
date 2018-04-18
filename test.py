@@ -98,6 +98,7 @@ def convertStr(s,n):
         a[j]=float(a[j])
     return a
 
+
 # s=readtext()
 #
 # for i in range(6):

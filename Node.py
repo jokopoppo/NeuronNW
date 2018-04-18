@@ -24,7 +24,9 @@ class Node:
             for i in range (self.input.__len__()):
                 self.w.append(random.uniform(0.5,1))
         else:
+
             for i in range (self.input.__len__()):
+
                 self.w.append(w[i])
 
         return self.w
