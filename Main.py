@@ -1,40 +1,27 @@
 from Node import Node
 import math
 import numpy as np
-# from test2 import *
+import random
 from test import *
 
-
-# initialize neural nw
-
-# end initialize neural nw
-
 def activationFunc(v):
-    # print("V = ",v)
+
     y = 1 / (1 + math.exp(-v))
 
     return y
-
-
 def dActivationfuction(y):
     x = y * (1 - y)
     return x
-
-
 def add_input(o1, o2):
     for i in range(o1.__len__()):
         for j in range(o2.__len__()):
             o1[i].add_input(o2[j])
     return
-
-
 def add_output(o1, o2):
     for i in range(o1.__len__()):
         for j in range(o2.__len__()):
             o1[i].add_output(o2[j])
     return
-
-
 def feedfoward(arr):
     # start feed forward
 
@@ -52,28 +39,19 @@ def feedfoward(arr):
 
         # produce y form node
 
-    # print("produce y form node\n",)
+
     return
-
-
 def setWnew(node, i):
     for j in range(node[i].w.__len__()):
-        # print(node[i].w[j],end="  ")
         node[i].w[j] += (node[i].gradient * node[i].x[j] * lr)
-        # print("W'",j," from node",i,":",node[i].w[j])
 
-    # print(node[i].bias,end="  ")
     node[i].bias += (node[i].gradient * 1 * lr)
-    # print("Bias'"," from node",i,":",node[i].bias)
+
     return
-
-
 def outputBPG(outputNode, d, err):
     for i in range(outputNode.__len__()):
-        # print("ERR =",d[i],"-",outputNode[i].y,"=",end=" ")
         err.append(d[i] - outputNode[i].y)
 
-        # print(err[i])
         # find delta w from each output node
         outputNode[i].wo = outputNode[i].w
         outputNode[i].gradient = (-err[i] * dActivationfuction(outputNode[i].y))
@@ -82,8 +60,6 @@ def outputBPG(outputNode, d, err):
 
     # outputBPG done
     return outputNode
-
-
 def hiddenBPG(hiddenNode):
     for i in range(hiddenNode.__len__()):
         # find delta w from each hidden node
@@ -96,13 +72,11 @@ def hiddenBPG(hiddenNode):
         setWnew(hiddenNode, i)
     # hiddenBPG done
     return hiddenNode
-
-
 def train(outputNode, hiddenNode, data, ans):
     # start train
-    ccc=0
+
     for i in range(data.__len__()):
-        # print("\n\n\n*******Row ",i,"Start*****\n\n\n")
+
         for j in range(data[i].__len__()):
             inputNode[j].y = data[i][j]
         # start feed forward
@@ -124,14 +98,11 @@ def train(outputNode, hiddenNode, data, ans):
     # train done
 
     return
-
-
 def test(outputNode, hiddenNode, data, ans):
     # start test
     correct = 0
-
+    # feed forward by data test
     for i in range(data.__len__()):
-        # print("\n\n\n*******Row ",i,"Start Test*****\n\n\n")
         for j in range(data[i].__len__()):
             inputNode[j].y = inputNode[j].x = data[i][j]
         # start feed forward
@@ -148,6 +119,7 @@ def test(outputNode, hiddenNode, data, ans):
 
     return correct
 
+# initialize neural nw
 
 inputNode = []
 hiddenNode = []
@@ -155,6 +127,7 @@ outputNode = []
 
 lr = 1
 
+# read data and pro-process
 data = readExel('Data.xls')
 data = preprocess(data, 1)
 
@@ -163,17 +136,11 @@ random.shuffle(data)
 
 dat=[]
 
+# divided data in to 10 boxes for 10-fold cross validation
 for i in range(10):
     dat.append(data[i*percent:(i+1)*percent])
 
-# random.shuffle(data)
-# data=iristest()
-
-
-# min = list(map(min, zip(*data)))
-# max = list(map(max, zip(*data)))
-
-
+# create input node equal to attribute in datatrain
 for i in range(data[0].__len__()-1):
     inputNode.append(Node(1, data[0][i]))
     inputNode[i].setW()
@@ -181,6 +148,7 @@ for i in range(data[0].__len__()-1):
 
 print()
 s = readtext("Output.txt")
+# create hidden node and output node and use W and Bias from save
 for i in range(3):
     hiddenNode.append(Node(float(s.pop(0))))
 outputNode.append(Node(float(s.pop(0))))
@@ -197,11 +165,12 @@ for i in range(3):
 s[0] = convertStr(s, 0)
 outputNode[0].setW(s.pop(0))
 
+# end initialize neural nw
 n = 0
 e = 0
 
 acc=[]
-while (n < 10):
+while (n < 1):
 
     datatrain=[]
     datatest=dat[n]
@@ -211,7 +180,7 @@ while (n < 10):
             datatrain+=dat[i]
 
     random.shuffle(datatrain)
-
+    # set desire output for test
     ans = []
     for i in datatrain:
         ans.append(int(i.pop(i.__len__() - 1)))
@@ -220,14 +189,23 @@ while (n < 10):
     for i in datatest:
         anstest.append(int(i.pop(i.__len__() - 1)))
 
+    # start train
     train(outputNode, hiddenNode, datatrain, ans)
+    # start test
     c = test(outputNode, hiddenNode, datatest, anstest)
     n += 1
     print(n, c)
     acc.append(c)
 
 accurancy=((sum(acc)/acc.__len__())/datatest.__len__())*100
-print("Accurancy = ",accurancy,"%")
+print("Accurancy =",accurancy,"%")
+
+for i in range(hiddenNode.__len__()):
+    print("Hidden Node",i,"Bias",hiddenNode[i].bias)
+print("Output Node Bias",outputNode[0].bias)
+for i in range(hiddenNode.__len__()):
+    print("Hidden Node",i,"Weights",hiddenNode[i].w)
+print("Output Node Weights",outputNode[0].w)
 
 # save W' and Bias' of all node
 
